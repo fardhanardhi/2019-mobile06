@@ -10,24 +10,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 
-import androidx.fragment.app.FragmentManager;
 import id.ac.polinema.idealbodyweight.R;
+import id.ac.polinema.idealbodyweight.util.BodyMassIndex;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ResultFragment.OnFragmentInteractionListener} interface
+ * {@link BodyMassIndexFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class ResultFragment extends Fragment {
-
-    private String information;
+public class BodyMassIndexFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ResultFragment() {
+    public BodyMassIndexFragment() {
         // Required empty public constructor
     }
 
@@ -35,27 +33,28 @@ public class ResultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_result, container, false);
-        TextView informationText = view.findViewById(R.id.text_information);
-        informationText.setText(information);
-        Button tryAgainButton = view.findViewById(R.id.button_try_again);
+        // Inflate the layout for this fragment
 
+        View view = inflater.inflate(R.layout.fragment_body_mass_index, container, false);
+        final EditText weightText = view.findViewById(R.id.input_weight);
+        final EditText heightText  = view.findViewById(R.id.input_height);
 
-        tryAgainButton.setOnClickListener(new View.OnClickListener() {
+        Button calculateButton = view.findViewById(R.id.button_calculate);
+        calculateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mListener != null && getTag() == "BROCA") {
-                    mListener.onTryAgainButtonClicked("BROCA");
-                } else {
-                    mListener.onTryAgainButtonClicked("BODY_MASS");
+                if (mListener != null) {
+                    String weightString = weightText.getText().toString();
+                    String heightString = heightText.getText().toString();
+                    int weight = Integer.parseInt(weightString);
+                    int height = Integer.parseInt(heightString);
+                    BodyMassIndex bodyMassIndex = new BodyMassIndex(weight, height);
+                    mListener.onBodyMassIndexButtonClicked(bodyMassIndex.getIndex());
+
                 }
             }
         });
         return view;
-    }
-
-    public void setInformation(String information) {
-        this.information = information;
     }
 
 
@@ -87,6 +86,6 @@ public class ResultFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onTryAgainButtonClicked(String tag);
+        void onBodyMassIndexButtonClicked(float index);
     }
 }
